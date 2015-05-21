@@ -1,0 +1,2 @@
+-- Lancement conteneur nginx
+docker run --name mynginx2 -v /var/www/html/docker-rubbos/:/usr/share/nginx/html:ro -P -d nginx
