@@ -1,5 +1,0 @@
--- Lancement conteneur nginx
-docker run --name nginx -v /var/www/html/docker-rubbos/:/usr/share/nginx/html:ro -P -d nginx
-
--- Lancement conteneur PHP
-docker run --name php -d php
