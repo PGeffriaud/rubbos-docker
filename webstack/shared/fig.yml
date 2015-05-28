@@ -1,0 +1,18 @@
+# Webstack PHP-FPM
+php:
+  image: jprjr/php-fpm
+  volumes:
+  - www:/srv/http
+  ports:
+  - 9000:9000
+# Webstack  NGINX
+nginx:
+  image: nginx
+  links:
+  - php:webstack_php
+  volumes:
+  - www:/usr/share/nginx/html
+  - conf/nginx.conf:/nginx.conf
+  ports:
+  - 8080:80
+  command: nginx -c /nginx.conf
