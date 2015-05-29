@@ -1,11 +1,13 @@
-# Webstack PHP-FPM
+# stack PHP-FPM
 php:
   image: jprjr/php-fpm
   volumes:
   - www:/srv/http
   ports:
   - 9000:9000
-# Webstack  NGINX
+  links:
+  - db:db
+# stack  NGINX
 nginx:
   image: nginx
   links:
@@ -16,3 +18,14 @@ nginx:
   ports:
   - 8080:80
   command: nginx -c /nginx.conf
+# stack MYSQL
+db:
+  image: mysql:5.6
+  volumes:
+  - data:/var/lib/mysql
+  ports:
+  - 3306:3306
+  environment:
+  - MYSQL_USER=root
+  - MYSQL_ROOT_PASSWORD=xela
+
