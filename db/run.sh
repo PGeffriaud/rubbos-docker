@@ -1,1 +1,4 @@
-sudo docker run --name rubbos-db -v ~/Dev/docker/data:/var/lib/mysql -d mysql
+__DIR=`pwd`
+
+sudo docker rm -f rubbos-db
+sudo docker run --name rubbos-db -p 0.0.0.0:3306:3306 -e MYSQL_ROOT_PASSWORD="xela" -v $__DIR/data:/var/lib/mysql mysql
