@@ -4,10 +4,10 @@ php:
   volumes:
   - www:/srv/http
   ports:
-  - 9000:9000
+  - rubbos_php_1:9000
   links:
-  - db:db
-# stack  NGINX
+  - db:webstack_db
+# stack NGINX
 nginx:
   image: nginx
   links:
@@ -20,12 +20,14 @@ nginx:
   command: nginx -c /nginx.conf
 # stack MYSQL
 db:
-  image: mysql:5.6
-  volumes:
-  - data:/var/lib/mysql
+  image: mysql
   ports:
-  - 3306:3306
+  - 0.0.0.0:3306:3306
+  volumes:
+  - data:/var/lib/mysql/data
   environment:
   - MYSQL_USER=root
   - MYSQL_ROOT_PASSWORD=xela
+  - MYSQL_DATABASE=rubbos
+  #command: mysql -h"$MYSQL_PORT_3306_TCP_ADDR" -P"$MYSQL_PORT_3306_TCP_PORT" -uroot -p"$MYSQL_ENV_MYSQL_ROOT_PASSWORD"
 
