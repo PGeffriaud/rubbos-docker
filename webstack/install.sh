@@ -22,4 +22,4 @@ sudo docker rm cluster-nginx
 
 echo "Run new containers"
 sudo docker run --name cluster-php -v $SHARED/html:/srv/http:ro --link rubbos-db:mysql -d jprjr/php-fpm
-sudo docker run --name cluster-nginx -v $SHARED/html:/usr/share/nginx/html:ro --link cluster-php:9000 -v $SHARED/conf/nginx.conf:/nginx.conf:ro -p 8080:80 nginx nginx -c /nginx.conf
+sudo docker run --name cluster-nginx -v $SHARED/html:/usr/share/nginx/html:ro --link cluster-php:9000 -v $SHARED/conf/nginx.conf:/nginx.conf:ro -d -p 8080:80 nginx nginx -c /nginx.conf
