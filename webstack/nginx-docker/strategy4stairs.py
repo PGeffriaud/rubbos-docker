@@ -24,7 +24,6 @@ class LoadBalancer:
 			return 3
 		if(self.ChargeProc < 100):
 			return 4
-		return 0
 	
 	def add(self, c,m,d, dockNumber):
 		self.ChargeProc = c
