@@ -1,6 +1,6 @@
 daemon off;
  
-user  nginx;
+user  root;
 worker_processes  1;
  
 error_log  /var/log/nginx/error.log warn;
@@ -15,6 +15,10 @@ events {
 http {
     include       /etc/nginx/mime.types;
     default_type  application/octet-stream;
+    
+    upstream php-docker {    
+        @@@WORKERS@@@
+    }
  
     log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
                       '$status $body_bytes_sent "$http_referer" '
@@ -27,14 +31,14 @@ http {
  
     keepalive_timeout  65;
  
-    #gzip  on;
+    gzip  on;
  
     server {
         listen       80;
         server_name  localhost;
  
         location / {
-            root   /usr/share/nginx/html;
+            root   /srv/http;
             index  index.html index.htm;
         }
  
@@ -50,7 +54,7 @@ http {
         # Pass PHP scripts to PHP-FPM
         location ~* \.php$ {
             fastcgi_index   index.php;
-            fastcgi_pass    cluster-php:9000;
+            fastcgi_pass    php-docker;
             #fastcgi_pass   unix:/var/run/php-fpm/php-fpm.sock;
             include         fastcgi_params;
             fastcgi_param   SCRIPT_FILENAME    /srv/http$fastcgi_script_name;
