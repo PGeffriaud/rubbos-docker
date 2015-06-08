@@ -5,6 +5,9 @@ import psutil
 import time
 import math
 from subprocess import Popen, PIPE
+from strategy4stairs import LoadBalancer
+import signal
+import sys
 import os.path
 
 DOCK_HOSTNAME = "localhost"
@@ -13,6 +16,10 @@ NGINX_UPDATE_CMD = "./lb-setup.sh"
 PHP_CREATE = "php-create.sh"
 PHP_REMOVE = "php-remove.sh"
 
+
+dockList = []
+i = DOCK_BEGIN_PORT
+stop = False
 
 class Dock:
 
@@ -60,7 +67,6 @@ def deleteDock(dockList):
 	else :
 		print("Échec de la suppression: " + str(deletedResponse))
 	#subprocess.call([scriptPath, toDelete.getDockId])
-	print(toDelete)
 
 def updateDockList(dockList):
 	lbUpdateParams = ""
@@ -79,24 +85,54 @@ def getNumberOfDocks(percents):
 	if(percent < 90):
 		return 4
 
+
+
+def getStats() :
+    return {
+     'cpu': 100 - psutil.cpu_times_percent(interval=1).idle,
+     'mem_available': psutil.virtual_memory().available,
+     'dockSize': 500 * 1000
+    }
+
+
+def quit(signal, frame):
+	global dockList
+	global stop
+	stop = True
+	while (len(dockList) > 0):   
+		deleteDock(dockList)
+
+
 def main() :
+	global i
+	global dockList
+	global stop
 	print("Programme de Load Balancing -- Application Rubbos")
-	dockList = []
+	signal.signal(signal.SIGINT, quit)
 	lastPercent = 0
-	i = DOCK_BEGIN_PORT
 
-	while (True):
-		percent = 100 - psutil.cpu_times_percent(interval=1).idle
+	stats = getStats()
+	loadBalancer = LoadBalancer(stats['cpu'],stats['mem_available'], stats['dockSize'], len(dockList))
 
-		while(getNumberOfDocks(percent) != len(dockList)) :
-			print("To create: " + str(getNumberOfDocks(percent) - len(dockList)))
-			difference = getNumberOfDocks(percent) - len(dockList)
-			if(difference >= 1) :
-				i = createDock(dockList, i)
-			elif(difference <= 0) :
-				deleteDock(dockList)
+	while (not(stop)):
+		stats = getStats()
+		print("CPU load: " + str(stats['cpu']))
+		print("Active docks: " + str(len(dockList)))
+		loadBalancer.add(stats['cpu'], stats['mem_available'], stats['dockSize'], len(dockList))
+		toCreate = loadBalancer.judge() - len(dockList)
+		print("To create: " + str(toCreate))
+		
+		while(toCreate > 0):
+			i = createDock(dockList, i)
 			updateNginxConf(dockList)
+			loadBalancer.add(stats['cpu'], stats['mem_available'], stats['dockSize'], len(dockList))
+			toCreate = loadBalancer.judge() - len(dockList)
+			
+		while(toCreate < 0):
+			deleteDock(dockList)
+			updateNginxConf(dockList)
+			loadBalancer.add(stats['cpu'], stats['mem_available'], stats['dockSize'], len(dockList))
+			toCreate = loadBalancer.judge() - len(dockList)
 
-		print("Charge processeur: " + str(percent))
 		time.sleep(5)
 main()
