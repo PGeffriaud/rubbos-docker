@@ -121,13 +121,13 @@ def main() :
 		loadBalancer.add(stats['cpu'], stats['mem_available'], stats['dockSize'], len(dockList))
 		toCreate = loadBalancer.judge() - len(dockList)
 		print("To create: " + str(toCreate))
-		
+
 		while(toCreate > 0):
 			i = createDock(dockList, i)
 			updateNginxConf(dockList)
 			loadBalancer.add(stats['cpu'], stats['mem_available'], stats['dockSize'], len(dockList))
 			toCreate = loadBalancer.judge() - len(dockList)
-			
+
 		while(toCreate < 0):
 			deleteDock(dockList)
 			updateNginxConf(dockList)

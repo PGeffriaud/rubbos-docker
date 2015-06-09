@@ -5,10 +5,10 @@ worker_processes  1;
  
 error_log  /var/log/nginx/error.log warn;
 pid        /var/run/nginx.pid;
- 
+worker_rlimit_nofile 65535; 
  
 events {
-    worker_connections  1024;
+    worker_connections  20000;
 }
  
  
