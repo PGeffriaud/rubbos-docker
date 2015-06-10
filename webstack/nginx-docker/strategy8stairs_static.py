@@ -16,14 +16,7 @@ class LoadBalancer:
 		return (self.MemoireLibre > self.DockSize * seuilDock)
 
 	def judge(self):
-		if(self.ChargeProc < 25):
-			return 1
-		if(self.ChargeProc < 50):
-			return 2
-		if(self.ChargeProc < 75):
-			return 3
-		if(self.ChargeProc <= 100):
-			return 4
+		return 8
 	
 	def add(self, c,m,d, dockNumber):
 		self.ChargeProc = c

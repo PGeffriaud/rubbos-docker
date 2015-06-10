@@ -5,7 +5,7 @@ import psutil
 import time
 import math
 from subprocess import Popen, PIPE
-from strategy4stairs import LoadBalancer
+from strategy4stairs_static import LoadBalancer
 import signal
 import sys
 import os.path
