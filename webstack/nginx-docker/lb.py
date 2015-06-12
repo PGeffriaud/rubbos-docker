@@ -5,7 +5,7 @@ import psutil
 import time
 import math
 from subprocess import Popen, PIPE
-from strategy4stairs_static import LoadBalancer
+from strategy4stairs import LoadBalancer
 import signal
 import sys
 import os.path
@@ -36,7 +36,14 @@ class Dock:
 	def getPort(self) : 
 		return self.port
 
-
+def execScript(filename, args):
+	scriptPath = os.path.abspath(filename)
+	callCmd = [scriptPath]
+	for arg in args: 
+		callCmd.append(arg)
+	pipe = Popen(callCmd, stdout=PIPE)
+	val = str(pipe.communicate()[0]).replace("\\n'", '').replace("b'", "")
+	return val
 
 def updateNginxConf(dockList) :
 	scriptPath= os.path.abspath("./lb-setup.sh")
@@ -45,28 +52,41 @@ def updateNginxConf(dockList) :
 		fullCmd.append("localhost:" + dock.getPort())
 	Popen(fullCmd)
 
-def createDock(dockList, i):
-	i+=1
-	scriptPath = os.path.abspath(PHP_CREATE)
-	pipe = Popen([scriptPath, str(i)], stdout=PIPE)
-	dockId = str(pipe.communicate()[0]).replace("\\n'", '').replace("b'", "");
-	newDock = Dock(dockId,str(i))
-	print("Création de l'élément")
+def createDock(dockList, port):
+	port+=1
+	dockId = execScript(PHP_CREATE, [str(port)])
+	newDock = Dock(dockId,str(port))
+	print("Élement créé")
 	print(newDock)
 	dockList.append(newDock)
 	return i
 
+def stopDock(dockList):
+	toStop = dockList.pop()
+	print("Suppression de l'élément " + str(toStop.getDockId()))
+	stoppedResponse = execScript(PHP_STOP, [toStop.getDockId()])
+	if(stoppedResponse == toStop.getDockId()):
+		print("Succès de la suppression")
+	else :
+		print("Échec de la suppression: " + str(stoppedResponse))
+
+def startDock(dockList)
+	toStart = dockList.pop()
+	startResponse = execScript(PHP_START, [str(toStart)])
+	if(startResponse == toStart.getDockId()):
+		print("Dock lancé")
+		print(str(toStart))
+	else:
+		print("Échec du lancement: " + str(startResponse))
+
 def deleteDock(dockList):
 	toDelete = dockList.pop()
 	print("Suppression de l'élément " + str(toDelete.getDockId()))
-	scriptPath = os.path.abspath(PHP_REMOVE)
-	pipe = Popen([scriptPath, toDelete.getDockId()], stdout=PIPE)
-	deletedResponse = str(pipe.communicate()[0]).replace("\\n'", "").replace("b'", "")
+	deletedResponse = execScript(PHP_REMOVE, [toDelete.getDockId()])
 	if(deletedResponse == toDelete.getDockId()):
 		print("Succès de la suppression")
 	else :
 		print("Échec de la suppression: " + str(deletedResponse))
-	#subprocess.call([scriptPath, toDelete.getDockId])
 
 def updateDockList(dockList):
 	lbUpdateParams = ""
