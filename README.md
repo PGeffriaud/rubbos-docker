@@ -9,7 +9,7 @@ Pour ce faire, le nombre d'instances de PHP (tiers applicatif) est adapté à la
 
 Il est nécessaire d'installer les paquets requis, ainsi que les fichiers de la base de données avant de lancer les différents 
 scripts de load balancing. 
-Les scripts install_archlinux.sh et install_ubuntu.sh ont été créés à cet effet, et sont à exécuter avant tout. 
+Les scripts ``install_archlinux.sh`` et ``install_ubuntu.sh`` ont été créés à cet effet, et sont à exécuter avant tout. 
 
 # Organisation des dossiers
 
@@ -30,7 +30,7 @@ Pour lancer ce tiers de l'application, veuillez exécuter le script run.sh situ�
 Le dossier Webstack contient les scripts permettant de lancer et mettre à jours des docks PHP. Le serveur nginx n'a pas été 
 dockerisé. Il est donc nécessaire d'avoir ce logiciel installé avant d'essayer de mettre en place les docks PHP. 
 
-Note: le script permettant à Nginx d'effectuer son load balancing nécessite d'avoir l'accès au fichier /etc/nginx/nginx.conf, 
+Note: le script permettant à Nginx d'effectuer son load balancing nécessite d'avoir l'accès au fichier ``/etc/nginx/nginx.conf``, 
 définissant la configuration de Nginx. 
 
 ## Scripts de load balancing
@@ -43,11 +43,11 @@ expérimentale.
 
 ## Stratégie 
 
-Se référer aux commentaires dans les fichiers lb.py et lb_inram.py pour plus d'informations sur les stratégies.
+Se référer aux commentaires dans les fichiers ``lb.py`` et ``lb_inram.py`` pour plus d'informations sur les stratégies.
 
 ### Mise en route 
 
-Pour ce faire, lancer le script lb.py, par l'intermédiaire de la commande suivante (une fois situé dans le répertoire 
+Pour ce faire, lancer le script ``lb.py``, par l'intermédiaire de la commande suivante (une fois situé dans le répertoire 
 webstack): 
 
 ```bash
